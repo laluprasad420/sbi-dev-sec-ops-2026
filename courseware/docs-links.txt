@@ -1,3 +1,18 @@
+Steps - 
+
+Download and set path of java - 
+Then - 
+StartSonar.bat 
+
+go to localhost:9000 
+
+login with admin admin 
+change password 
+
+Create a new project and analyze 
+
+
+
 Downloads - 
 
 --- no need to install - only download, extract, set path and use --- 
