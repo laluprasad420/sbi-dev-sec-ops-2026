@@ -35,7 +35,7 @@
         <springdoc.version>2.5.0</springdoc.version>
         <!-- SonarQube configuration -->
         <sonar.organization>vaman-pundit</sonar.organization>
-		<sonar.host.url>http://localhost:9000/</sonar.host.url>
+		<sonar.host.url>http://192.168.80.1:9000</sonar.host.url>
         <sonar.projectKey>test</sonar.projectKey>
         <sonar.projectName>SBI Employee Management System</sonar.projectName>
         <sonar.java.source>17</sonar.java.source>
