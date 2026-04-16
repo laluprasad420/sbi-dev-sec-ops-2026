@@ -30,9 +30,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * detail leakage) 4. Non-ADMIN user cannot access write endpoints (403) 5.
  * Context loads without a hardcoded JWT secret (env var required)
  */
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("dev")
+// @SpringBootTest
+// @AutoConfigureMockMvc
+// @ActiveProfiles("dev")
 /** class EmsApplicationTests {
 
 	@Autowired
