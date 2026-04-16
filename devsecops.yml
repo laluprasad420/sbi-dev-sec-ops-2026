@@ -31,7 +31,7 @@ jobs:
     - name: Build and test
       run: mvn clean verify -q
       env:
-        JWT_SECRET: ${{ secrets.JWT_SECRET_TEST }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
     # ── 4. SAST — SonarQube ──────────────────────────────────────
     - name: SAST — SonarQube scan
