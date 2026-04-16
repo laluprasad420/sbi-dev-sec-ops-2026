@@ -66,29 +66,24 @@ jobs:
         done
         exit 1
 
-    # ── 7. DAST — OWASP ZAP ──────────────────────────────────────
-    - name: DAST — OWASP ZAP Scan
+      # ── 7. DAST — OWASP ZAP ──────────────────────────────────────
+    - name: DAST — OWASP ZAP
       run: |
-        # Pre-create file and set permissions for Docker to write to it
-        touch zap-report.html
-        chmod 777 zap-report.html
-        
         docker run --network=host \
-          -v $(pwd):/zap/wrk:rw \
-          -t ghcr.io/zaproxy/zaproxy:stable zap-api-scan.py \
-          -t http://localhost:8080/v3/api-docs \
-          -f openapi \
-          -r zap-report.html \
-          -I
+          -v ${{ github.workspace }}:/zap/wrk \
+          ghcr.io/zaproxy/zaproxy:stable \
+          zap-api-scan.py \
+            -t http://localhost:8080/v3/api-docs \
+            -f openapi \
+            -r zap-report.html \
+            -I
       continue-on-error: true
-
     - name: Upload ZAP report
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: zap-report
         path: zap-report.html
-
     # ── 8. Cleanup ───────────────────────────────────────────────
     - name: Stop container
       if: always()
