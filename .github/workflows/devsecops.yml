@@ -52,7 +52,7 @@ jobs:
       run: |
         docker run -d --name ems-dast \
           -p 8080:8080 \
-          -e JWT_SECRET=${{ secrets.JWT_SECRET_TEST }} \
+          -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
           sbi-ems:${{ github.sha }}
 
         echo "Waiting for app to be ready..."
