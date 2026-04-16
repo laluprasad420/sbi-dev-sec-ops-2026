@@ -69,6 +69,12 @@ jobs:
       # ── 7. DAST — OWASP ZAP ──────────────────────────────────────
     - name: DAST — OWASP ZAP
       run: |
+        
+        touch zap-report.html
+        
+        chmod 777 zap-report.html
+    
+    
         docker run --network=host \
           -v ${{ github.workspace }}:/zap/wrk \
           ghcr.io/zaproxy/zaproxy:stable \
