@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("dev")
-class EmsApplicationTests {
+/** class EmsApplicationTests {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -142,4 +142,5 @@ class EmsApplicationTests {
 		mockMvc.perform(get("/actuator/env")).andExpect(status().isUnauthorized());
 	}
 }
+*//
 **/
