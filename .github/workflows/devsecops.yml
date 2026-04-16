@@ -12,12 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
     # ── 1. Checkout ──────────────────────────────────────────────
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0        # required by SonarQube for blame info
+        fetch-depth: 0
 
     # ── 2. Java setup ────────────────────────────────────────────
     - name: Set up Java 17
@@ -27,7 +26,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    # ── 3. Build + Test (JaCoCo coverage collected here) ────────
+    # ── 3. Build + Test ──────────────────────────────────────────
     - name: Build and test
       run: mvn clean verify -q
       env:
@@ -37,11 +36,11 @@ jobs:
     - name: SAST — SonarCloud scan
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        JWT_SECRET:  ${{ secrets.JWT_SECRET_TEST }}
       run: |
         mvn sonar:sonar \
           -Dsonar.projectKey=laluprasad420_sbi-dev-sec-ops-2026 \
           -Dsonar.organization=laluprasad420 \
+          -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=$SONAR_TOKEN
 
     # ── 5. Docker Build ──────────────────────────────────────────
@@ -57,24 +56,30 @@ jobs:
           sbi-ems:${{ github.sha }}
 
         echo "Waiting for app to be ready..."
-        for i in $(seq 1 24); do
+        for i in $(seq 1 20); do
           if curl -sf http://localhost:8080/actuator/health > /dev/null; then
             echo "App is ready"
-            break
+            exit 0
           fi
+          echo "Waiting..."
           sleep 5
         done
+        exit 1
 
     # ── 7. DAST — OWASP ZAP ──────────────────────────────────────
-    - name: DAST — OWASP ZAP
+    - name: DAST — OWASP ZAP Scan
       run: |
+        # Pre-create file and set permissions for Docker to write to it
+        touch zap-report.html
+        chmod 777 zap-report.html
+        
         docker run --network=host \
-          ghcr.io/zaproxy/zaproxy:stable \
-          zap-api-scan.py \
-            -t http://localhost:8080/v3/api-docs \
-            -f openapi \
-            -r zap-report.html \
-            -I
+          -v $(pwd):/zap/wrk:rw \
+          -t ghcr.io/zaproxy/zaproxy:stable zap-api-scan.py \
+          -t http://localhost:8080/v3/api-docs \
+          -f openapi \
+          -r zap-report.html \
+          -I
       continue-on-error: true
 
     - name: Upload ZAP report
@@ -87,4 +92,4 @@ jobs:
     # ── 8. Cleanup ───────────────────────────────────────────────
     - name: Stop container
       if: always()
-      run: docker stop ems-dast || true
+      run: docker rm -f ems-dast || true
